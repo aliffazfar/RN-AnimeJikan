@@ -13,6 +13,7 @@ module.exports = {
           '@context': './src/context',
           '@hooks': './src/hooks',
           '@navigators': './src/navigators',
+          '@redux': './src/redux',
           '@screens': './src/screens',
           '@themes': './src/themes',
           '@services': './src/services',

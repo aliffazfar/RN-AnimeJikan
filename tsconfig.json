@@ -21,6 +21,9 @@
       "@navigators/*": [
         "./src/navigators/*"
       ],
+      "@redux/*": [
+        "./src/redux/*"
+      ],
       "@screens/*": [
         "./src/screens/*"
       ],

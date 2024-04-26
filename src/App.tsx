@@ -7,6 +7,9 @@ import {
 } from 'react-native-safe-area-context';
 import {useInitialRootStore} from '@hooks/useInitialRootStore';
 import {AppNavigator} from '@navigators/AppNavigator';
+import {PersistGate} from 'redux-persist/integration/react';
+import {Provider} from 'react-redux';
+import {persistor, store} from '@redux/store';
 
 interface AppProps {
   hideSplashScreen: () => Promise<void>;
@@ -25,9 +28,13 @@ const App = (props: AppProps) => {
   if (!rehydrated) return null;
 
   return (
-    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <AppNavigator />
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+          <AppNavigator />
+        </SafeAreaProvider>
+      </PersistGate>
+    </Provider>
   );
 };
 export default App;
