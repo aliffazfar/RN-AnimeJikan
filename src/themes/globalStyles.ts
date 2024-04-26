@@ -1,13 +1,13 @@
 import {StyleSheet} from 'react-native';
 import {colors} from './colors';
 
-export default StyleSheet.create({
+export const globalStyles = StyleSheet.create({
   containerBase: {
     flex: 1,
     flexGrow: 1,
     width: '100%',
-    padding: 16,
-    justifyContent: 'center',
+    paddingTop: 20,
+    paddingHorizontal: 32,
   },
   textFieldContainer: {
     width: '100%',

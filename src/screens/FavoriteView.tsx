@@ -2,10 +2,10 @@ import {StyleSheet, Text} from 'react-native';
 import React from 'react';
 import {Wrapper} from '@components/Wrapper';
 
-export const Airing = () => {
+export const FavoriteView = () => {
   return (
     <Wrapper>
-      <Text style={{color: '#000'}}>hasdhshddhs</Text>
+      <Text style={{color: '#000'}}>FavoriteView</Text>
     </Wrapper>
   );
 };

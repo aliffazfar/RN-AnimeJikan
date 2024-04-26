@@ -1,8 +1,8 @@
 import React from 'react';
-import {Check, PlayCircle, Heart} from 'react-native-feather';
+import {Check, PlayCircle, Heart, Home, Menu} from 'react-native-feather';
 import {SvgProps} from 'react-native-svg';
 
-export type IconName = 'Play' | 'Check' | 'Heart';
+export type IconName = 'Play' | 'Check' | 'Heart' | 'Home' | 'Menu';
 
 interface IconProps extends SvgProps {
   name: IconName;
@@ -22,6 +22,12 @@ export const Icon = (props: IconProps) => {
       break;
     case 'Heart':
       CustomIcon = Heart;
+      break;
+    case 'Home':
+      CustomIcon = Home;
+      break;
+    case 'Menu':
+      CustomIcon = Menu;
       break;
   }
 

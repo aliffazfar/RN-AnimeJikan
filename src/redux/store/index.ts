@@ -12,10 +12,7 @@ import {
 
 import {configureStore} from '@reduxjs/toolkit';
 import rootReducer from '@redux/reducers';
-import {MMKV} from 'react-native-mmkv';
-
-// #region MMKV setup
-const storage = new MMKV();
+import {storage} from './mmkvStorage';
 
 export const reduxStorage: Storage = {
   setItem: (key: string, value: any) => {
