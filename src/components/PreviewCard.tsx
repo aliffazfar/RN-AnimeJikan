@@ -4,11 +4,20 @@ import FastImage from 'react-native-fast-image';
 import {Icon} from './Icon';
 import {colors} from '@themes/colors';
 
-export const PreviewCard = (props: TopAiringData) => {
-  const {images, title, score} = props;
+interface PreviewCardProps extends TopAiringData {
+  index: number;
+}
+
+export const PreviewCard = (props: PreviewCardProps) => {
+  const {images, title, score, index} = props;
 
   return (
-    <View style={styles.container}>
+    <View
+      key={index}
+      style={[
+        styles.container,
+        index % 2 ? {paddingLeft: 10} : {paddingRight: 10},
+      ]}>
       <FastImage
         style={styles.img}
         source={{
@@ -31,9 +40,9 @@ export const PreviewCard = (props: TopAiringData) => {
 const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
-    width: '45%',
+    flex: 1,
   },
-  img: {width: 150, height: 200, borderRadius: 10},
+  img: {width: '100%', height: 200, borderRadius: 10},
   detail: {
     flexDirection: 'row',
     marginTop: 10,
