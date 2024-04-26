@@ -65,7 +65,7 @@ export const CustomDrawer = ({
               iconName = 'Home';
               break;
             case 'Favorite':
-              iconName = 'Heart';
+              iconName = 'Bookmark';
               break;
           }
 

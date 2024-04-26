@@ -1,8 +1,23 @@
 import React from 'react';
-import {Check, PlayCircle, Heart, Home, Menu} from 'react-native-feather';
+import {
+  PauseCircle,
+  PlayCircle,
+  FastForward,
+  Home,
+  Menu,
+  Bookmark,
+  Search,
+} from 'react-native-feather';
 import {SvgProps} from 'react-native-svg';
 
-export type IconName = 'Play' | 'Check' | 'Heart' | 'Home' | 'Menu';
+export type IconName =
+  | 'Play'
+  | 'Pause'
+  | 'FastForward'
+  | 'Home'
+  | 'Menu'
+  | 'Bookmark'
+  | 'Search';
 
 interface IconProps extends SvgProps {
   name: IconName;
@@ -17,17 +32,23 @@ export const Icon = (props: IconProps) => {
     case 'Play':
       CustomIcon = PlayCircle;
       break;
-    case 'Check':
-      CustomIcon = Check;
+    case 'Pause':
+      CustomIcon = PauseCircle;
       break;
-    case 'Heart':
-      CustomIcon = Heart;
+    case 'FastForward':
+      CustomIcon = FastForward;
       break;
     case 'Home':
       CustomIcon = Home;
       break;
     case 'Menu':
       CustomIcon = Menu;
+      break;
+    case 'Bookmark':
+      CustomIcon = Bookmark;
+      break;
+    case 'Search':
+      CustomIcon = Search;
       break;
   }
 

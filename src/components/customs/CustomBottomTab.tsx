@@ -37,13 +37,13 @@ export const CustomBottomTab = (props: BottomTabBarProps) => {
         let iconName: IconName = 'Play';
         switch (route.name) {
           case 'Airing':
-            iconName = 'Play';
+            iconName = 'Pause';
             break;
           case 'Complete':
-            iconName = 'Check';
+            iconName = 'Play';
             break;
           case 'Upcoming':
-            iconName = 'Heart';
+            iconName = 'FastForward';
             break;
         }
 

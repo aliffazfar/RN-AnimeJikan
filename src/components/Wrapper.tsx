@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   StyleSheet,
   View,
+  ViewStyle,
 } from 'react-native';
 import React, {ReactNode} from 'react';
 import {DrawerButton} from './atoms/DrawerButton';
@@ -12,12 +13,13 @@ import {globalStyles} from '@themes/globalStyles';
 import {LOCAL_IMAGES} from '@assets/images';
 
 interface WrapperProps {
-  children: ReactNode;
+  children?: ReactNode;
+  style?: ViewStyle;
 }
 
-export const Wrapper = ({children}: WrapperProps) => {
+export const Wrapper = ({children, style}: WrapperProps) => {
   return (
-    <SafeAreaView style={globalStyles.containerBase}>
+    <SafeAreaView style={[globalStyles.containerBase, style]}>
       <View style={styles.container}>
         <DrawerButton style={{flex: 1}} />
         <Pressable
