@@ -36,9 +36,9 @@ export const AnimeDetailView = () => {
 
   let details: string[] = [];
 
-  if (data.rating) details.push(data.rating);
-  if (data.score) details.push(String(data.score));
-  if (data.year) details.push(String(data.year));
+  if (data?.rating) details.push(data.rating);
+  if (data?.score) details.push(String(data.score));
+  if (data?.year) details.push(String(data.year));
 
   const openURL = (url: string) => {
     Linking.openURL(url).catch(err => console.error('An error occurred', err));
@@ -68,7 +68,7 @@ export const AnimeDetailView = () => {
       </View>
       <View style={styles.actionContainer}>
         <View style={styles.flex1}>
-          <BackCircleButton onPress={() => navigation.navigate('Root')} />
+          <BackCircleButton onPress={() => navigation.goBack()} />
         </View>
         <LoveCircleButton onPress={addFavorite} isActive={isUserCurrentFav} />
       </View>
@@ -84,10 +84,10 @@ export const AnimeDetailView = () => {
                 </Text>
               ))}
             </View>
-            {data.url && <PlayButton onPress={() => openURL(data.url)} />}
+            {data?.url && <PlayButton onPress={() => openURL(data.url)} />}
           </View>
           <Text style={styles.synopisText}>{data.synopsis}</Text>
-          {data.genres && (
+          {data?.genres.length > 0 && (
             <View style={styles.genreContainer}>
               <FlashList
                 data={data.genres}
@@ -102,7 +102,7 @@ export const AnimeDetailView = () => {
                     <Text style={styles.genreText}>{item.name}</Text>
                   </View>
                 )}
-                estimatedItemSize={100}
+                estimatedItemSize={50}
               />
             </View>
           )}
