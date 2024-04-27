@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useCallback} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {globalStyles} from '@themes/globalStyles';
 import FastImage from 'react-native-fast-image';
@@ -15,7 +15,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '@themes/colors';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigation} from '@navigators/AppNavigator';
-import {FlashList} from '@shopify/flash-list';
 import {PlayButton} from '@components/atoms/PlayButton';
 import {BackCircleButton} from '@components/atoms/BackCircleButton';
 import {LoveCircleButton} from '@components/atoms/LoveCircleButton';
@@ -48,6 +47,11 @@ export const AnimeDetailView = () => {
     if (isUserCurrentFav) return dispatch(removeFavorite(data));
     dispatch(setFavorite(data));
   };
+
+  const keyExtractor = useCallback(
+    (item: any, i: number) => `${i}-${item.id}`,
+    [],
+  );
 
   return (
     <SafeAreaView style={globalStyles.containerBase}>
@@ -89,21 +93,13 @@ export const AnimeDetailView = () => {
           <Text style={styles.synopisText}>{data.synopsis}</Text>
           {data.genres.length > 0 && (
             <View style={styles.genreContainer}>
-              <FlashList
-                data={data.genres}
-                keyExtractor={item => item.mal_id.toString()}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                ItemSeparatorComponent={() => (
-                  <View style={{marginRight: 10}} />
-                )}
-                renderItem={({item}) => (
-                  <View style={styles.genreBox}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {data.genres.map((item, index) => (
+                  <View key={index} style={styles.genreBox}>
                     <Text style={styles.genreText}>{item.name}</Text>
                   </View>
-                )}
-                estimatedItemSize={50}
-              />
+                ))}
+              </ScrollView>
             </View>
           )}
         </View>
@@ -153,11 +149,13 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   genreBox: {
-    width: 100,
     padding: 5,
-    paddingHorizontal: 5,
+    paddingHorizontal: 15,
     backgroundColor: colors.palette.primary600,
     borderRadius: 5,
+    marginRight: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   genreText: {textAlign: 'center', color: 'white'},
   synopisText: {color: colors.palette.neutral900, fontSize: 14},

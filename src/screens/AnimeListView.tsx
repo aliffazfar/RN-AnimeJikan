@@ -78,7 +78,7 @@ export const ListView = ({status}: ListViewProps) => {
     initialPageParam: 1,
     enabled: false,
     retry: 3,
-    staleTime: 10000,
+    staleTime: 5 * (60 * 1000), // 5 mins
   });
 
   useEffect(() => {
@@ -109,7 +109,7 @@ export const ListView = ({status}: ListViewProps) => {
     (isSearchingLoading && !queryData && !isSearchFetchingNextPage);
 
   const isAllCaughtUp = flattenPagination
-    ? !flattenPagination[0].has_next_page
+    ? !flattenPagination[flattenPagination.length - 1].has_next_page
     : false;
 
   const loadNext = () => {
@@ -164,7 +164,7 @@ export const ListView = ({status}: ListViewProps) => {
             )}
             keyExtractor={keyExtractor}
             onEndReached={loadNext}
-            onEndReachedThreshold={0.5}
+            onEndReachedThreshold={0.8}
             ListFooterComponent={
               <Fragment>
                 {isNextPageLoading && (

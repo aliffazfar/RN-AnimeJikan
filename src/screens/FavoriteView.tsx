@@ -34,7 +34,7 @@ export const FavoriteView = () => {
   return (
     <Wrapper style={styles.wrapper}>
       <SearchInput
-        placeholder="Search"
+        placeholder="Search your favorite"
         value={searchText}
         onChangeText={onChangeSearch}
         contentContainerStyle={styles.search}
