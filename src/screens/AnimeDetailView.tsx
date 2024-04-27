@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import React, {useCallback} from 'react';
+import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {globalStyles} from '@themes/globalStyles';
 import FastImage from 'react-native-fast-image';
@@ -47,11 +47,6 @@ export const AnimeDetailView = () => {
     if (isUserCurrentFav) return dispatch(removeFavorite(data));
     dispatch(setFavorite(data));
   };
-
-  const keyExtractor = useCallback(
-    (item: any, i: number) => `${i}-${item.id}`,
-    [],
-  );
 
   return (
     <SafeAreaView style={globalStyles.containerBase}>
