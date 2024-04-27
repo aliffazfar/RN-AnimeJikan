@@ -1,11 +1,11 @@
 import {TextInput, View, ViewStyle} from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import {colors} from '@themes/colors';
 import {Icon} from '@components/Icon';
 
 interface SearchInputProps {
   value?: string;
-  onChangeText: ((text: string) => void) | undefined;
+  onChangeText: (text: string) => void;
   placeholder?: string;
   onPress?: () => void;
   contentContainerStyle?: ViewStyle;
@@ -15,10 +15,8 @@ export const SearchInput = ({
   value,
   onChangeText,
   placeholder,
-  onPress,
   contentContainerStyle,
 }: SearchInputProps) => {
-  const [isFocused, setFocused] = useState(false);
   return (
     <View
       style={[
@@ -34,6 +32,7 @@ export const SearchInput = ({
         contentContainerStyle,
       ]}>
       <TextInput
+        value={value}
         style={{
           flex: 1,
           color: colors.palette.neutral900,
@@ -43,16 +42,12 @@ export const SearchInput = ({
         onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor={colors.palette.neutral500}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
       />
       <Icon
-        onPress={onPress}
-        name="Search"
+        onPress={value ? () => onChangeText('') : undefined}
+        name={value ? 'XCircle' : 'Search'}
         width={30}
-        color={
-          isFocused ? colors.palette.neutral900 : colors.palette.neutral500
-        }
+        color={value ? colors.palette.neutral900 : colors.palette.neutral500}
         style={{paddingHorizontal: 30}}
       />
     </View>

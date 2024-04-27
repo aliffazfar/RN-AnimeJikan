@@ -7,6 +7,7 @@ import {
   Menu,
   Bookmark,
   Search,
+  XCircle,
 } from 'react-native-feather';
 import {SvgProps} from 'react-native-svg';
 
@@ -17,7 +18,8 @@ export type IconName =
   | 'Home'
   | 'Menu'
   | 'Bookmark'
-  | 'Search';
+  | 'Search'
+  | 'XCircle';
 
 interface IconProps extends SvgProps {
   name: IconName;
@@ -49,6 +51,9 @@ export const Icon = (props: IconProps) => {
       break;
     case 'Search':
       CustomIcon = Search;
+      break;
+    case 'XCircle':
+      CustomIcon = XCircle;
       break;
   }
 

@@ -1,42 +1,58 @@
 import {ActivityIndicator, StyleSheet} from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {Fragment, useCallback, useEffect, useState} from 'react';
 import {Wrapper} from '@components/Wrapper';
 import {useInfiniteQuery} from '@tanstack/react-query';
-import {fetchTopAiring} from '@services/Anime/fetchTopAiring';
 import {SearchInput} from '@components/atoms/SearchInput';
 import {PreviewCard} from '@components/PreviewCard';
 import {FlashList} from '@shopify/flash-list';
-import {getAnimeSearch} from '@services/Anime/getAnimeSearch';
+import {AnimeOrderBy, getAnimeSearch} from '@services/Anime/getAnimeSearch';
 import {useDebounce} from '@uidotdev/usehooks';
+import {Text} from 'react-native';
+import {colors} from '@themes/colors';
+import {FilterTabs} from '@components/FilterTabs';
 
 export const Airing = () => {
-  const [searchText, onChangeSearch] = useState('');
+  const [activeItem, setActiveItem] = useState<AnimeOrderBy>('popularity');
+  const [searchText, onChangeSearch] = useState<string>('');
   const debouncedSearch = useDebounce(searchText, 300);
 
-  const {data, isFetching, hasNextPage, fetchNextPage, isFetchingNextPage} =
-    useInfiniteQuery({
-      queryKey: ['topAiring'],
-      queryFn: fetchTopAiring,
-      getNextPageParam: lastPage => {
-        if (lastPage.pagination.has_next_page) {
-          return lastPage.pagination.current_page + 1;
-        }
-      },
-      initialPageParam: 1,
-      retry: false,
-      staleTime: 10000,
-    });
+  const {
+    data,
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: ['topAiring'],
+    queryFn: ({pageParam}) =>
+      getAnimeSearch({pageParam, status: 'airing', order_by: activeItem}),
+    getNextPageParam: lastPage => {
+      if (lastPage.pagination.has_next_page) {
+        return lastPage.pagination.current_page + 1;
+      }
+    },
+    initialPageParam: 1,
+    retry: false,
+    staleTime: 10000,
+  });
 
   const {
     data: queryData,
-    isLoading: isQueryFetching,
-    refetch,
-    hasNextPage: queryHasNextPage,
-    fetchNextPage: queryFetchNextPage,
-    isFetchingNextPage: queryIsFetchingNextPage,
+    isFetching: isSearchFetching,
+    refetch: searchRefetch,
+    hasNextPage: searchHasNextPage,
+    fetchNextPage: searchFetchNextPage,
+    isFetchingNextPage: isSearchFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: ['getAnimeSearch'],
-    queryFn: ({pageParam}) => getAnimeSearch({pageParam, query: searchText}),
+    queryFn: ({pageParam}) =>
+      getAnimeSearch({
+        pageParam,
+        q: searchText,
+        status: 'airing',
+        order_by: 'popularity',
+      }),
     getNextPageParam: lastPage => {
       if (lastPage.pagination.has_next_page) {
         return lastPage.pagination.current_page + 1;
@@ -49,18 +65,31 @@ export const Airing = () => {
   });
 
   useEffect(() => {
-    if (debouncedSearch) {
+    if (activeItem) {
       refetch();
     }
-  }, [debouncedSearch]);
+  }, [activeItem]);
 
-  const isInitialLoading = isFetching && !data;
-  const isSearchingLoading = isQueryFetching || searchText !== debouncedSearch;
-  const isNextPageLoading = isFetchingNextPage || queryIsFetchingNextPage;
+  useEffect(() => {
+    if (debouncedSearch) {
+      searchRefetch();
+    }
+  }, [debouncedSearch]);
 
   const flattenData = searchText
     ? queryData?.pages.flatMap(page => page.data)
     : data?.pages.flatMap(page => page.data);
+
+  const flattenPagination = searchText
+    ? queryData?.pages.flatMap(page => page.pagination)
+    : data?.pages.flatMap(page => page.pagination);
+
+  const isLoading = isFetching || !data;
+  const isSearchingLoading = isSearchFetching || searchText !== debouncedSearch;
+  const isNextPageLoading = isFetchingNextPage || isSearchFetchingNextPage;
+  const isAllCaughtUp = flattenPagination
+    ? !flattenPagination[0].has_next_page
+    : false;
 
   const keyExtractor = useCallback(
     (item: any, i: number) => `${i}-${item.id}`,
@@ -68,10 +97,10 @@ export const Airing = () => {
   );
 
   const loadNext = () => {
-    if (debouncedSearch && queryHasNextPage && !isQueryFetching) {
-      return queryFetchNextPage();
+    if (debouncedSearch && searchHasNextPage && !isSearchFetching) {
+      return searchFetchNextPage();
     }
-    if (hasNextPage && !isFetching) {
+    if (hasNextPage && !isFetching && !searchText) {
       return fetchNextPage();
     }
   };
@@ -84,7 +113,14 @@ export const Airing = () => {
         onChangeText={onChangeSearch}
         contentContainerStyle={styles.search}
       />
-      {isInitialLoading || isSearchingLoading ? (
+      {!searchText && (
+        <FilterTabs
+          activeItem={activeItem}
+          setActiveItem={setActiveItem}
+          style={styles.filter}
+        />
+      )}
+      {isLoading || isSearchingLoading ? (
         <ActivityIndicator size={'small'} style={styles.spinner} />
       ) : (
         flattenData && (
@@ -92,15 +128,20 @@ export const Airing = () => {
             data={flattenData}
             numColumns={2}
             renderItem={({item, index}) => (
-              <PreviewCard {...item} index={index} />
+              <PreviewCard {...item!} index={index} />
             )}
             keyExtractor={keyExtractor}
             onEndReached={loadNext}
             onEndReachedThreshold={0.5}
             ListFooterComponent={
-              isNextPageLoading ? (
-                <ActivityIndicator size={'small'} style={styles.spinner} />
-              ) : null
+              <Fragment>
+                {isNextPageLoading && (
+                  <ActivityIndicator size={'small'} style={styles.spinner} />
+                )}
+                {isAllCaughtUp && (
+                  <Text style={styles.textDetail}>You're all caught up</Text>
+                )}
+              </Fragment>
             }
             estimatedItemSize={200}
           />
@@ -115,4 +156,11 @@ const styles = StyleSheet.create({
   spinner: {marginVertical: 40},
   flatListColumnWrapper: {justifyContent: 'space-between'},
   search: {marginBottom: 20},
+  filter: {marginBottom: 10},
+  textDetail: {
+    color: colors.palette.neutral700,
+    fontSize: 12,
+    textAlign: 'center',
+    marginVertical: 40,
+  },
 });

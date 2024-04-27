@@ -1,6 +1,6 @@
-declare interface fetchTopAiringResponse {
+declare interface getAnimeSearchResponse {
   pagination: Pagination;
-  data: TopAiringData[];
+  data: AnimeData[];
 }
 
 interface Pagination {
@@ -16,7 +16,7 @@ interface Items {
   per_page: number;
 }
 
-declare interface TopAiringData {
+declare interface AnimeData {
   mal_id: number;
   url: string;
   images: Images;

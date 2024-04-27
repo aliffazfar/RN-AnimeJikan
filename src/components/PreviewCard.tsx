@@ -4,7 +4,7 @@ import FastImage from 'react-native-fast-image';
 import {Icon} from './Icon';
 import {colors} from '@themes/colors';
 
-interface PreviewCardProps extends TopAiringData {
+interface PreviewCardProps extends AnimeData {
   index: number;
 }
 
@@ -33,7 +33,7 @@ export const PreviewCard = (props: PreviewCardProps) => {
         <Icon name="Bookmark" width={20} stroke={colors.palette.primary600} />
       </View>
       <Text style={styles.textDetail}>{rating}</Text>
-      <Text style={styles.textDetail}>Score: {score}/10</Text>
+      {score && <Text style={styles.textDetail}>Score: {score}/10</Text>}
       {year && <Text style={styles.textDetail}>Year: {year}</Text>}
     </View>
   );
