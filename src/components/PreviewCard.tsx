@@ -3,6 +3,7 @@ import React from 'react';
 import FastImage from 'react-native-fast-image';
 import {Icon} from './Icon';
 import {colors} from '@themes/colors';
+import {useAppSelector} from '@redux/hooks';
 
 interface PreviewCardProps extends AnimeData {
   index: number;
@@ -10,7 +11,11 @@ interface PreviewCardProps extends AnimeData {
 }
 
 export const PreviewCard = (props: PreviewCardProps) => {
-  const {images, title, score, index, rating, year, onPress} = props;
+  const {images, title, score, index, rating, year, onPress, mal_id} = props;
+
+  const userFavorites = useAppSelector(state => state.UserFavorites).favorites;
+
+  const isUserCurrentFav = userFavorites?.some(item => item.mal_id === mal_id);
 
   return (
     <TouchableOpacity
@@ -34,7 +39,16 @@ export const PreviewCard = (props: PreviewCardProps) => {
         <Text numberOfLines={2} style={styles.title}>
           {title}
         </Text>
-        <Icon name="Bookmark" width={20} stroke={colors.palette.primary600} />
+        <Icon
+          name="Bookmark"
+          width={20}
+          stroke={colors.palette.primary600}
+          fill={
+            isUserCurrentFav
+              ? colors.palette.primary600
+              : colors.palette.neutral200
+          }
+        />
       </View>
       <Text style={styles.textDetail}>{rating}</Text>
       {score && <Text style={styles.textDetail}>Score: {score}/10</Text>}
