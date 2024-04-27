@@ -11,6 +11,13 @@ import {PersistGate} from 'redux-persist/integration/react';
 import {Provider} from 'react-redux';
 import {persistor, store} from '@redux/store';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {Platform, StatusBar} from 'react-native';
+
+StatusBar.setBarStyle('dark-content');
+if (Platform.OS === 'android') {
+  StatusBar.setBackgroundColor('rgba(0,0,0,0)');
+  StatusBar.setTranslucent(true);
+}
 
 interface AppProps {
   hideSplashScreen: () => Promise<void>;

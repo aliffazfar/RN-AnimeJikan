@@ -1,10 +1,17 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  DefaultTheme,
+  NavigationProp,
+} from '@react-navigation/native';
 import {BottomTabNavigator} from './BottomTabNavigator';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {FavoriteView} from '@screens/FavoriteView';
 import {CustomDrawer} from '@components/customs/CustomDrawer';
 import {Dimensions} from 'react-native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {colors} from '@themes/colors';
+import {AnimeDetailView} from '@screens/AnimeDetailView';
 
 const width = Dimensions.get('window').width;
 const Drawer = createDrawerNavigator();
@@ -24,13 +31,38 @@ const AppDrawer = function AppStack() {
   );
 };
 
+export type ScreenNames = ['Root', 'DetailView'];
+export type RootStackParamList = Record<ScreenNames[number], undefined>;
+export type StackNavigation = NavigationProp<RootStackParamList>;
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+const AppStack = function AppStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <Stack.Screen name="Root" component={AppDrawer} />
+      <Stack.Screen name="DetailView" component={AnimeDetailView} />
+    </Stack.Navigator>
+  );
+};
+
 export interface NavigationProps
   extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
 
 export const AppNavigator = function AppNavigator(props: NavigationProps) {
+  const navTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: colors.background,
+    },
+  };
   return (
-    <NavigationContainer {...props}>
-      <AppDrawer />
+    <NavigationContainer {...props} theme={navTheme}>
+      <AppStack />
     </NavigationContainer>
   );
 };

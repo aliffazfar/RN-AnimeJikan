@@ -1,4 +1,4 @@
 import {combineReducers} from 'redux';
-import user from './user';
+import ViewDetail from '../slices/viewDetailSlice';
 
-export default combineReducers({user});
+export default combineReducers({ViewDetail});

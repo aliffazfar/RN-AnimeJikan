@@ -10,8 +10,17 @@ import {useDebounce} from '@uidotdev/usehooks';
 import {Text} from 'react-native';
 import {colors} from '@themes/colors';
 import {FilterTabs} from '@components/FilterTabs';
+import {useIsMount} from '@hooks/useIsMount';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigation} from '@navigators/AppNavigator';
+import {useAppDispatch} from '@redux/hooks';
+import {setViewDetail} from '@redux/slices/viewDetailSlice';
 
 export const Airing = () => {
+  const dispatch = useAppDispatch();
+  const navigation = useNavigation<StackNavigation>();
+  const isMount = useIsMount();
+
   const [activeItem, setActiveItem] = useState<AnimeOrderBy>('popularity');
   const [searchText, onChangeSearch] = useState<string>('');
   const debouncedSearch = useDebounce(searchText, 300);
@@ -65,6 +74,7 @@ export const Airing = () => {
   });
 
   useEffect(() => {
+    if (isMount) return;
     if (activeItem) {
       refetch();
     }
@@ -84,7 +94,7 @@ export const Airing = () => {
     ? queryData?.pages.flatMap(page => page.pagination)
     : data?.pages.flatMap(page => page.pagination);
 
-  const isLoading = isFetching || !data;
+  const isLoading = isFetching && !isFetchingNextPage;
   const isSearchingLoading = isSearchFetching || searchText !== debouncedSearch;
   const isNextPageLoading = isFetchingNextPage || isSearchFetchingNextPage;
   const isAllCaughtUp = flattenPagination
@@ -103,6 +113,11 @@ export const Airing = () => {
     if (hasNextPage && !isFetching && !searchText) {
       return fetchNextPage();
     }
+  };
+
+  const onPressCard = (item: AnimeData) => {
+    dispatch(setViewDetail(item));
+    navigation.navigate('DetailView');
   };
 
   return (
@@ -128,7 +143,11 @@ export const Airing = () => {
             data={flattenData}
             numColumns={2}
             renderItem={({item, index}) => (
-              <PreviewCard {...item!} index={index} />
+              <PreviewCard
+                {...item!}
+                index={index}
+                onPress={() => onPressCard(item)}
+              />
             )}
             keyExtractor={keyExtractor}
             onEndReached={loadNext}
