@@ -24,8 +24,12 @@ export const Airing = () => {
       staleTime: 10000,
     });
 
-  const isInitialLoading = isFetching && !isFetchingNextPage;
-  const flattenData = data && data.pages.flatMap(page => page.data);
+  const isInitialLoading = isFetching && !data;
+
+  const flattenData = data?.pages.flatMap(page => page.data);
+  const filteredData = flattenData?.filter(item =>
+    item.title.toLowerCase().includes(searchText.toLowerCase()),
+  );
 
   const keyExtractor = useCallback(
     (item: any, i: number) => `${i}-${item.id}`,
@@ -40,18 +44,15 @@ export const Airing = () => {
 
   return (
     <Wrapper style={styles.wrapper}>
+      <SearchInput
+        placeholder="Search"
+        value={searchText}
+        onChangeText={onChangeSearch}
+        contentContainerStyle={styles.search}
+      />
       {flattenData && (
         <FlashList
-          ListHeaderComponent={
-            <SearchInput
-              placeholder="Search"
-              value={searchText}
-              onChangeText={onChangeSearch}
-              onPress={() => {}}
-              contentContainerStyle={styles.search}
-            />
-          }
-          data={flattenData}
+          data={searchText ? filteredData : flattenData}
           numColumns={2}
           renderItem={({item, index}) => (
             <PreviewCard {...item} index={index} />

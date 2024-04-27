@@ -9,7 +9,7 @@ interface PreviewCardProps extends TopAiringData {
 }
 
 export const PreviewCard = (props: PreviewCardProps) => {
-  const {images, title, score, index} = props;
+  const {images, title, score, index, rating, year} = props;
 
   return (
     <View
@@ -32,7 +32,9 @@ export const PreviewCard = (props: PreviewCardProps) => {
         </Text>
         <Icon name="Bookmark" width={20} stroke={colors.palette.primary600} />
       </View>
-      <Text style={styles.score}>Score: {score} / 10</Text>
+      <Text style={styles.textDetail}>{rating}</Text>
+      <Text style={styles.textDetail}>Score: {score}/10</Text>
+      {year && <Text style={styles.textDetail}>Year: {year}</Text>}
     </View>
   );
 };
@@ -53,5 +55,5 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 0,
   },
-  score: {color: colors.palette.neutral700, fontSize: 11},
+  textDetail: {color: colors.palette.neutral700, fontSize: 11},
 });

@@ -7,7 +7,7 @@ interface SearchInputProps {
   value?: string;
   onChangeText: ((text: string) => void) | undefined;
   placeholder?: string;
-  onPress: () => void;
+  onPress?: () => void;
   contentContainerStyle?: ViewStyle;
 }
 
