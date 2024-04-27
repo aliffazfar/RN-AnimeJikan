@@ -10,7 +10,7 @@ import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {globalStyles} from '@themes/globalStyles';
 import FastImage from 'react-native-fast-image';
-import {useAppSelector} from '@redux/hooks';
+import {useAppDispatch, useAppSelector} from '@redux/hooks';
 import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '@themes/colors';
 import {useNavigation} from '@react-navigation/native';
@@ -19,13 +19,20 @@ import {FlashList} from '@shopify/flash-list';
 import {PlayButton} from '@components/atoms/PlayButton';
 import {BackCircleButton} from '@components/atoms/BackCircleButton';
 import {LoveCircleButton} from '@components/atoms/LoveCircleButton';
+import {removeFavorite, setFavorite} from '@redux/slices/userFavorites';
 
 const {width, height} = Dimensions.get('screen');
 const bannerHeight = height / 1.8;
 
 export const AnimeDetailView = () => {
+  const dispatch = useAppDispatch();
   const navigation = useNavigation<StackNavigation>();
   const data = useAppSelector(state => state.ViewDetail).data as AnimeData;
+  const userFavorites = useAppSelector(state => state.UserFavorites).favorites;
+
+  const isUserCurrentFav = userFavorites?.some(
+    item => item.mal_id === data.mal_id,
+  );
 
   let details: string[] = [];
 
@@ -35,6 +42,11 @@ export const AnimeDetailView = () => {
 
   const openURL = (url: string) => {
     Linking.openURL(url).catch(err => console.error('An error occurred', err));
+  };
+
+  const addFavorite = () => {
+    if (isUserCurrentFav) return dispatch(removeFavorite(data));
+    dispatch(setFavorite(data));
   };
 
   return (
@@ -58,7 +70,7 @@ export const AnimeDetailView = () => {
         <View style={styles.flex1}>
           <BackCircleButton onPress={() => navigation.navigate('Root')} />
         </View>
-        <LoveCircleButton onPress={() => navigation.navigate('Root')} />
+        <LoveCircleButton onPress={addFavorite} isActive={isUserCurrentFav} />
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{height: bannerHeight - 100}} />
