@@ -87,7 +87,7 @@ export const AnimeDetailView = () => {
             {data?.url && <PlayButton onPress={() => openURL(data.url)} />}
           </View>
           <Text style={styles.synopisText}>{data.synopsis}</Text>
-          {data?.genres.length > 0 && (
+          {data.genres.length > 0 && (
             <View style={styles.genreContainer}>
               <FlashList
                 data={data.genres}

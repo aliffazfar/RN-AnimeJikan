@@ -5,7 +5,11 @@ import {useInfiniteQuery} from '@tanstack/react-query';
 import {SearchInput} from '@components/atoms/SearchInput';
 import {PreviewCard} from '@components/PreviewCard';
 import {FlashList} from '@shopify/flash-list';
-import {AnimeOrderBy, getAnimeSearch} from '@services/Anime/getAnimeSearch';
+import {
+  AnimeOrderBy,
+  AnimeStatus,
+  getAnimeSearch,
+} from '@services/Anime/getAnimeSearch';
 import {useDebounce} from '@uidotdev/usehooks';
 import {Text} from 'react-native';
 import {colors} from '@themes/colors';
@@ -16,14 +20,18 @@ import {StackNavigation} from '@navigators/AppNavigator';
 import {useAppDispatch} from '@redux/hooks';
 import {setViewDetail} from '@redux/slices/viewDetailSlice';
 
-export const Airing = () => {
+export interface ListViewProps {
+  status: AnimeStatus;
+}
+
+export const ListView = ({status}: ListViewProps) => {
   const dispatch = useAppDispatch();
   const navigation = useNavigation<StackNavigation>();
   const isMount = useIsMount();
 
   const [activeItem, setActiveItem] = useState<AnimeOrderBy>('popularity');
   const [searchText, onChangeSearch] = useState<string>('');
-  const debouncedSearch = useDebounce(searchText, 300);
+  const debouncedSearch = useDebounce(searchText, 200);
 
   const {
     data,
@@ -33,16 +41,16 @@ export const Airing = () => {
     isFetchingNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ['topAiring'],
+    queryKey: [status, activeItem],
     queryFn: ({pageParam}) =>
-      getAnimeSearch({pageParam, status: 'airing', order_by: activeItem}),
+      getAnimeSearch({pageParam, status: status, order_by: activeItem}),
     getNextPageParam: lastPage => {
       if (lastPage.pagination.has_next_page) {
         return lastPage.pagination.current_page + 1;
       }
     },
     initialPageParam: 1,
-    retry: false,
+    retry: 3,
     staleTime: 10000,
   });
 
@@ -54,12 +62,12 @@ export const Airing = () => {
     fetchNextPage: searchFetchNextPage,
     isFetchingNextPage: isSearchFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ['getAnimeSearch'],
+    queryKey: [status, searchText],
     queryFn: ({pageParam}) =>
       getAnimeSearch({
         pageParam,
         q: searchText,
-        status: 'airing',
+        status: status,
         order_by: 'popularity',
       }),
     getNextPageParam: lastPage => {
@@ -69,7 +77,7 @@ export const Airing = () => {
     },
     initialPageParam: 1,
     enabled: false,
-    retry: false,
+    retry: 3,
     staleTime: 10000,
   });
 
@@ -94,17 +102,15 @@ export const Airing = () => {
     ? queryData?.pages.flatMap(page => page.pagination)
     : data?.pages.flatMap(page => page.pagination);
 
-  const isLoading = isFetching && !isFetchingNextPage;
-  const isSearchingLoading = isSearchFetching || searchText !== debouncedSearch;
   const isNextPageLoading = isFetchingNextPage || isSearchFetchingNextPage;
+  const isSearchingLoading = isSearchFetching || searchText !== debouncedSearch;
+  const isInitialLoading =
+    (isFetching && !isFetchingNextPage && !data) ||
+    (isSearchingLoading && !queryData && !isSearchFetchingNextPage);
+
   const isAllCaughtUp = flattenPagination
     ? !flattenPagination[0].has_next_page
     : false;
-
-  const keyExtractor = useCallback(
-    (item: any, i: number) => `${i}-${item.id}`,
-    [],
-  );
 
   const loadNext = () => {
     if (debouncedSearch && searchHasNextPage && !isSearchFetching) {
@@ -119,6 +125,11 @@ export const Airing = () => {
     dispatch(setViewDetail(item));
     navigation.navigate('DetailView');
   };
+
+  const keyExtractor = useCallback(
+    (item: any, i: number) => `${i}-${item.id}`,
+    [],
+  );
 
   return (
     <Wrapper style={styles.wrapper}>
@@ -135,12 +146,14 @@ export const Airing = () => {
           style={styles.filter}
         />
       )}
-      {isLoading || isSearchingLoading ? (
+      {isInitialLoading ? (
         <ActivityIndicator size={'small'} style={styles.spinner} />
       ) : (
         flattenData && (
           <FlashList
-            data={flattenData}
+            data={flattenData.filter(
+              item => !item.rating?.toUpperCase().startsWith('R'),
+            )}
             numColumns={2}
             renderItem={({item, index}) => (
               <PreviewCard
@@ -163,6 +176,7 @@ export const Airing = () => {
               </Fragment>
             }
             estimatedItemSize={200}
+            showsVerticalScrollIndicator={false}
           />
         )
       )}

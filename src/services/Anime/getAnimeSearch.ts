@@ -14,8 +14,10 @@ export type AnimeOrderBy =
   | 'members'
   | 'favorites';
 
+export type AnimeStatus = 'airing' | 'complete' | 'upcoming';
+
 export interface getAnimeSearchProps {
-  status?: 'airing' | 'complete' | 'upcoming';
+  status?: AnimeStatus;
   q?: string;
   pageParam?: number;
   rating?: 'g' | 'pg' | 'pg13' | 'r17' | 'r' | 'rx';
@@ -23,29 +25,25 @@ export interface getAnimeSearchProps {
 }
 
 export const getAnimeSearch = async (props: getAnimeSearchProps) => {
-  let endpoint = ENDPOINTS.getAnimeSearch;
+  const queryParams = new URLSearchParams();
 
-  const queryParams = [];
   if (props.status) {
-    queryParams.push(`status=${props.status}`);
+    queryParams.append('status', props.status);
   }
   if (props.q) {
-    queryParams.push(`q=${props.q}`);
+    queryParams.append('q', props.q);
   }
   if (props.pageParam) {
-    queryParams.push(`page=${props.pageParam}`);
+    queryParams.append('page', props.pageParam.toString());
   }
   if (props.rating) {
-    queryParams.push(`rating=${props.rating}`);
+    queryParams.append('rating', props.rating);
   }
   if (props.order_by) {
-    queryParams.push(`order_by=${props.order_by}`);
+    queryParams.append('order_by', props.order_by);
   }
 
-  if (queryParams.length > 0) {
-    endpoint += `?${queryParams.join('&')}`;
-  }
-
+  const endpoint = `${ENDPOINTS.getAnimeSearch}?${queryParams}`;
   const response = await instance.get(endpoint);
   const data = await response.json();
   return data as getAnimeSearchResponse;

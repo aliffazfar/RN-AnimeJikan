@@ -4,6 +4,7 @@ import {colors} from '@themes/colors';
 import {Icon, IconName} from '@components/Icon';
 import {TabActions} from '@react-navigation/native';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
+import {ANIME_STATUS_VIEW} from '@navigators/BottomTabNavigator';
 
 export const CustomBottomTab = (props: BottomTabBarProps) => {
   const {state, descriptors, navigation} = props;
@@ -36,13 +37,13 @@ export const CustomBottomTab = (props: BottomTabBarProps) => {
 
         let iconName: IconName = 'Play';
         switch (route.name) {
-          case 'Airing':
-            iconName = 'Pause';
+          case ANIME_STATUS_VIEW.AIRING:
+            iconName = 'Activity';
             break;
-          case 'Complete':
+          case ANIME_STATUS_VIEW.COMPLETE:
             iconName = 'Play';
             break;
-          case 'Upcoming':
+          case ANIME_STATUS_VIEW.UPCOMING:
             iconName = 'FastForward';
             break;
         }

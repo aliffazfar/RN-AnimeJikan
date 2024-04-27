@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  PauseCircle,
   PlayCircle,
   FastForward,
   Home,
@@ -10,12 +9,13 @@ import {
   XCircle,
   ArrowLeft,
   Play,
+  Airplay,
 } from 'react-native-feather';
 import {SvgProps} from 'react-native-svg';
 
 export type IconName =
   | 'Play'
-  | 'Pause'
+  | 'Activity'
   | 'FastForward'
   | 'Home'
   | 'Menu'
@@ -38,8 +38,8 @@ export const Icon = (props: IconProps) => {
     case 'Play':
       CustomIcon = PlayCircle;
       break;
-    case 'Pause':
-      CustomIcon = PauseCircle;
+    case 'Activity':
+      CustomIcon = Airplay;
       break;
     case 'FastForward':
       CustomIcon = FastForward;
