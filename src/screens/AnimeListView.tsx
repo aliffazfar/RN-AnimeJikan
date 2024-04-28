@@ -1,4 +1,4 @@
-import {ActivityIndicator, StyleSheet} from 'react-native';
+import {ActivityIndicator, Alert, StyleSheet} from 'react-native';
 import React, {Fragment, useCallback, useEffect, useState} from 'react';
 import {Wrapper} from '@components/Wrapper';
 import {useInfiniteQuery} from '@tanstack/react-query';
@@ -40,6 +40,7 @@ export const ListView = ({status}: ListViewProps) => {
     fetchNextPage,
     isFetchingNextPage,
     refetch,
+    isError,
   } = useInfiniteQuery({
     queryKey: [status, activeItem],
     queryFn: ({pageParam}) =>
@@ -51,16 +52,17 @@ export const ListView = ({status}: ListViewProps) => {
     },
     initialPageParam: 1,
     retry: 3,
-    staleTime: 10000,
+    staleTime: 5 * (60 * 1000), // 5 mins
   });
 
   const {
-    data: queryData,
+    data: searchData,
     isFetching: isSearchFetching,
     refetch: searchRefetch,
     hasNextPage: searchHasNextPage,
     fetchNextPage: searchFetchNextPage,
     isFetchingNextPage: isSearchFetchingNextPage,
+    isError: isSearchError,
   } = useInfiniteQuery({
     queryKey: [status, searchText],
     queryFn: ({pageParam}) =>
@@ -82,6 +84,18 @@ export const ListView = ({status}: ListViewProps) => {
   });
 
   useEffect(() => {
+    if (isError || isSearchError) {
+      // *** Example ***
+      Alert.alert(
+        'Error',
+        'An error occurred while fetching Anime',
+        [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+        {cancelable: false},
+      );
+    }
+  }, [isError, isSearchError]);
+
+  useEffect(() => {
     if (isMount) return;
     if (activeItem) {
       refetch();
@@ -95,18 +109,18 @@ export const ListView = ({status}: ListViewProps) => {
   }, [debouncedSearch]);
 
   const flattenData = searchText
-    ? queryData?.pages.flatMap(page => page.data)
+    ? searchData?.pages.flatMap(page => page.data)
     : data?.pages.flatMap(page => page.data);
 
   const flattenPagination = searchText
-    ? queryData?.pages.flatMap(page => page.pagination)
+    ? searchData?.pages.flatMap(page => page.pagination)
     : data?.pages.flatMap(page => page.pagination);
 
   const isNextPageLoading = isFetchingNextPage || isSearchFetchingNextPage;
   const isSearchingLoading = isSearchFetching || searchText !== debouncedSearch;
   const isInitialLoading =
     (isFetching && !isFetchingNextPage && !data) ||
-    (isSearchingLoading && !queryData && !isSearchFetchingNextPage);
+    (isSearchingLoading && !searchData && !isSearchFetchingNextPage);
 
   const isAllCaughtUp = flattenPagination
     ? !flattenPagination[flattenPagination.length - 1].has_next_page

@@ -12,6 +12,7 @@ import {Dimensions} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {colors} from '@themes/colors';
 import {AnimeDetailView} from '@screens/AnimeDetailView';
+import {Platform, StatusBar} from 'react-native';
 
 const width = Dimensions.get('window').width;
 const Drawer = createDrawerNavigator();
@@ -53,6 +54,12 @@ export interface NavigationProps
   extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
 
 export const AppNavigator = function AppNavigator(props: NavigationProps) {
+  StatusBar.setBarStyle('dark-content');
+  if (Platform.OS === 'android') {
+    StatusBar.setBackgroundColor('rgba(0,0,0,0)');
+    StatusBar.setTranslucent(true);
+  }
+
   const navTheme = {
     ...DefaultTheme,
     colors: {

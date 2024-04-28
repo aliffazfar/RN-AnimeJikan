@@ -36,8 +36,9 @@ export const AnimeDetailView = () => {
   let details: string[] = [];
 
   if (data?.rating) details.push(data.rating);
-  if (data?.score) details.push(String(data.score));
-  if (data?.year) details.push(String(data.year));
+  if (data?.score) details.push('Score: ' + String(data.score));
+  if (data?.rank) details.push('Rank ' + String(data.rank));
+  if (data?.year) details.push('Year: ' + String(data.year));
 
   const openURL = (url: string) => {
     Linking.openURL(url).catch(err => console.error('An error occurred', err));
