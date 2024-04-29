@@ -1,4 +1,4 @@
-import {ActivityIndicator, Alert, StyleSheet} from 'react-native';
+import {ActivityIndicator, Alert, StyleSheet, View} from 'react-native';
 import React, {Fragment, useCallback, useEffect, useState} from 'react';
 import {Wrapper} from '@components/Wrapper';
 import {useInfiniteQuery} from '@tanstack/react-query';
@@ -164,34 +164,36 @@ export const ListView = ({status}: ListViewProps) => {
         <ActivityIndicator size={'small'} style={styles.spinner} />
       ) : (
         flattenData && (
-          <FlashList
-            data={flattenData.filter(
-              item => !item.rating?.toUpperCase().startsWith('R'),
-            )}
-            numColumns={2}
-            renderItem={({item, index}) => (
-              <PreviewCard
-                {...item!}
-                index={index}
-                onPress={() => onPressCard(item)}
-              />
-            )}
-            keyExtractor={keyExtractor}
-            onEndReached={loadNext}
-            onEndReachedThreshold={0.8}
-            ListFooterComponent={
-              <Fragment>
-                {isNextPageLoading && (
-                  <ActivityIndicator size={'small'} style={styles.spinner} />
-                )}
-                {isAllCaughtUp && (
-                  <Text style={styles.textDetail}>You're all caught up</Text>
-                )}
-              </Fragment>
-            }
-            estimatedItemSize={200}
-            showsVerticalScrollIndicator={false}
-          />
+          <View style={{paddingBottom: 60, height: '100%'}}>
+            <FlashList
+              data={flattenData.filter(
+                item => !item.rating?.toUpperCase().startsWith('R'),
+              )}
+              numColumns={2}
+              renderItem={({item, index}) => (
+                <PreviewCard
+                  {...item!}
+                  index={index}
+                  onPress={() => onPressCard(item)}
+                />
+              )}
+              keyExtractor={keyExtractor}
+              onEndReached={loadNext}
+              onEndReachedThreshold={0.8}
+              ListFooterComponent={
+                <Fragment>
+                  {isNextPageLoading && (
+                    <ActivityIndicator size={'small'} style={styles.spinner} />
+                  )}
+                  {isAllCaughtUp && (
+                    <Text style={styles.textDetail}>You're all caught up</Text>
+                  )}
+                </Fragment>
+              }
+              estimatedItemSize={200}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
         )
       )}
     </Wrapper>
@@ -200,7 +202,7 @@ export const ListView = ({status}: ListViewProps) => {
 
 const styles = StyleSheet.create({
   wrapper: {paddingHorizontal: 32},
-  spinner: {marginVertical: 40},
+  spinner: {marginVertical: 90, marginBottom: 100},
   flatListColumnWrapper: {justifyContent: 'space-between'},
   search: {marginBottom: 20},
   filter: {marginBottom: 10},

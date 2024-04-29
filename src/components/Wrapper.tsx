@@ -2,7 +2,6 @@ import {
   Alert,
   Image,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   View,
   ViewStyle,
@@ -11,6 +10,7 @@ import React, {ReactNode} from 'react';
 import {DrawerButton} from './atoms/DrawerButton';
 import {globalStyles} from '@themes/globalStyles';
 import {LOCAL_IMAGES} from '@assets/images';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 interface WrapperProps {
   children?: ReactNode;

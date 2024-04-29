@@ -6,7 +6,6 @@ export const globalStyles = StyleSheet.create({
     flex: 1,
     flexGrow: 1,
     width: '100%',
-    paddingTop: 40,
   },
   textFieldContainer: {
     width: '100%',
